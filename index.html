@@ -86,7 +86,7 @@
     <div id="level">Level: 1</div>
 
     <!-- 합해져야 하는 숫자 표시 -->
-    <div id="target-number">목표 숫자 : 10</div>
+    <div id="target-number"></div>
 
     <!-- 게임 보드, 점수, 타이머를 표시할 div 요소들 -->
     <div id="game-board"></div>
@@ -100,6 +100,7 @@
         let timer;
         let secondsLeft;
         let currentLevel = 1; // 현재 레벨 변수 추가
+        let targetNumber = (Math.floor(Math.random() * 10) + 1) + currentLevel * 10 ; // 목표 숫자 변수 추가
 
         // 초기 로딩 시에만 자동으로 게임 시작
 // 게임이 다음 레벨로 넘어갈 때는 startGame 호출
@@ -114,10 +115,10 @@
             secondsLeft = 60;
             updateScore();
             updateTimer();
-            updateLevel(); // 레벨 표시 업데이트
             initializeBoard(level);
             startTimer();
             showAllCards(); // 보드를 초기화하고 모든 카드를 보여줌
+            updateLevel(); // 레벨 표시 업데이트
         }
 
         // 게임 시작 함수
@@ -126,18 +127,24 @@
             const board = document.getElementById("game-board");
             board.innerHTML = "";
             selectedCards = [];
-            initializeBoard(currentLevel);
-            showAllCards();
             secondsLeft += 30;
             updateLevel(); // 레벨 표시 업데이트
+            updateTargetNumber(); // 목표 숫자 업데이트
+            initializeBoard(currentLevel);
+            showAllCards();
+
         }
 
         // 현재 레벨을 표시하는 함수
         function updateLevel() {
             document.getElementById("level").textContent = `Level: ${currentLevel}`;
-            document.getElementById("target-number").textContent = `목표 숫자: ${currentLevel * 10}`;
+            document.getElementById("target-number").textContent = `목표 숫자: ${targetNumber}`;
         }
 
+        function updateTargetNumber() {
+            targetNumber = (Math.floor(Math.random() * 10) + 1) + currentLevel * 10;
+            document.getElementById("target-number").textContent = `목표 숫자: ${targetNumber}`;
+        }
 // 모든 카드를 보이게 하는 함수
 function showAllCards() {
     const cards = document.querySelectorAll('.card');
@@ -168,7 +175,7 @@ function showAllCards() {
 // 카드에 할당할 숫자 생성 함수
 function generateNumbers(level) {
     const numbers = [];
-    const pairSum = currentLevel * 10; // 한 쌍의 숫자의 합
+    const pairSum = targetNumber; // 한 쌍의 숫자의 합
     const numberOfPairs = 8; // 생성할 숫자 쌍의 개수
 
     for (let i = 1; i <= pairSum / 2; i++) {
@@ -197,7 +204,7 @@ async function selectCard(card) {
         // 카드를 복사하여 사용
         const cardsCopy = [...selectedCards];
 
-        if (sum === currentLevel * 10) { // 현재 레벨의 10배일 때
+        if (sum === targetNumber) { // 현재 레벨의 10배일 때
             cardsCopy.forEach(card => {
                 card.style.visibility = "hidden"; // 카드를 사라지게 함
             });
